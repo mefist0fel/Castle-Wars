@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -7,5 +7,11 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
+
+  <!-- SharedCode lives in Unity; server compiles it directly to stay in sync. -->
+  <!-- No UnityEngine types allowed inside SharedCode — see CLAUDE.md. -->
+  <ItemGroup>
+    <Compile Include="..\Castle Wars Project\Assets\SharedCode\**\*.cs" />
+  </ItemGroup>
 
 </Project>

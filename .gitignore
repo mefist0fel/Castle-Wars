@@ -7,10 +7,10 @@
 tmp/
 
 # Unity auto-generated IDE project files (client only)
-Castle Wars Projects/**/*.csproj
-Castle Wars Projects/**/*.unityproj
-Castle Wars Projects/**/*.sln
-Castle Wars Projects/**/*.userprefs
+Castle Wars Project/**/*.csproj
+Castle Wars Project/**/*.unityproj
+Castle Wars Project/**/*.sln
+Castle Wars Project/**/*.userprefs
 
 # Unity editor/user-specific settings
 .vs/

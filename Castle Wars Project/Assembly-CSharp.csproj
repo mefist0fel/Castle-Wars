@@ -10,7 +10,7 @@
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <RootNamespace></RootNamespace>
-    <ProjectGuid>{AC9600A1-F908-FD28-DF84-91EE6B1E83E6}</ProjectGuid>
+    <ProjectGuid>{FE202A26-BDFB-27B5-0F4A-A0B531A59CE1}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <AssemblyName>Assembly-CSharp</AssemblyName>
@@ -61,7 +61,20 @@
     <Analyzer Include="C:\Program Files\Unity\Hub\Editor\6000.3.5f2\Editor\Data\Tools\BuildPipeline\Unity.SourceGenerators\Unity.UIToolkit.SourceGenerator.dll" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\TutorialInfo\Scripts\Readme.cs" />
+    <Compile Include="Assets\SharedCode\Protocol\ILogicCommand.cs" />
+    <Compile Include="Assets\SharedCode\Entities\BaseEntity.cs" />
+    <Compile Include="Assets\SharedCode\Protocol\ISystemCommand.cs" />
+    <Compile Include="Assets\SharedCode\Entities\FactionEntity.cs" />
+    <Compile Include="Assets\SharedCode\Entities\CityEntity.cs" />
+    <Compile Include="Assets\SharedCode\Entities\ArmyEntity.cs" />
+    <Compile Include="Assets\Scripts\Visualization\MapVisualizer.cs" />
+    <Compile Include="Assets\SharedCode\Entities\PlayerEntity.cs" />
+    <Compile Include="Assets\Scripts\Visualization\RegionView.cs" />
+    <Compile Include="Assets\SharedCode\Entities\RegionEntity.cs" />
+    <Compile Include="Assets\Scripts\Visualization\CityView.cs" />
+    <Compile Include="Assets\SharedCode\World\WorldState.cs" />
+    <Compile Include="Assets\Scripts\Bootstrap\LocalSimulation.cs" />
+    <Compile Include="Assets\Scripts\Visualization\ArmyView.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">
