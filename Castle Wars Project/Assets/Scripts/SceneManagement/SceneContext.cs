@@ -195,6 +195,11 @@ public sealed class SceneContext : ScriptableObject
         if (entry.Layer == SceneType.State)
         {
             SceneManager.SetActiveScene(handle.UnityScene);
+
+            var payloadScene = SceneManager.GetSceneByName(PayloadSceneName);
+            if (payloadScene.IsValid())
+                SceneManager.UnloadSceneAsync(payloadScene);
+
             if (_fader != null)
             {
                 _fader.Hide();
@@ -256,6 +261,8 @@ public sealed class SceneContext : ScriptableObject
         return newHandle;
     }
 
+    private const string PayloadSceneName = "_Payload";
+
     private static void UnloadScene(SceneHandle handle)
     {
         if (!handle.IsLoaded)
@@ -263,6 +270,11 @@ public sealed class SceneContext : ScriptableObject
         handle.IsLoaded = false;
         handle.UnityScene = default;
         handle.Controller = null;
+
+        // Unity refuses to unload the last loaded scene — create a transient empty scene as placeholder.
+        if (SceneManager.sceneCount == 1)
+            SceneManager.CreateScene(PayloadSceneName);
+
         SceneManager.UnloadSceneAsync(handle.SceneName);
     }
 
