@@ -1,0 +1,36 @@
+# ========================
+# Unity (client)
+# ========================
+[Ll]ibrary/
+[Tt]emp/
+[Ll]ogs/
+tmp/
+
+# Unity auto-generated IDE project files (client only)
+Castle Wars Projects/**/*.csproj
+Castle Wars Projects/**/*.unityproj
+Castle Wars Projects/**/*.sln
+Castle Wars Projects/**/*.userprefs
+
+# Unity editor/user-specific settings
+.vs/
+*EditorUserSettings.asset
+**/UserSettings/
+
+# Gradle (Android builds)
+*.gradle/
+
+# ========================
+# .NET / C# (server)
+# ========================
+[Bb]in/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+
+# ========================
+# Tools
+# ========================
+
+# Claude Code local settings (personal, not for sharing)
+.claude/settings.local.json
