@@ -1,4 +1,4 @@
-using CastleWars.Shared.Entities;
+using CastleWars.Shared.Game.Entities;
 using UnityEngine;
 
 namespace CastleWars.Visualization
@@ -12,7 +12,7 @@ namespace CastleWars.Visualization
 
         private void Awake() => _renderer = GetComponent<Renderer>();
 
-        public void Bind(ArmyEntity army, FactionEntity faction)
+        public void Refresh(ArmyEntity army, FactionEntity faction)
         {
             Army = army;
             _renderer.material.color = faction != null
@@ -21,14 +21,9 @@ namespace CastleWars.Visualization
         }
 
         public void UpdatePosition(Vector3 from, Vector3 to)
-        {
-            float t = Army.MovementProgress / 1000f;
-            transform.position = Vector3.Lerp(from, to, t) + Vector3.up * 0.6f;
-        }
+            => transform.position = Vector3.Lerp(from, to, Army.MovementProgress / 1000f) + Vector3.up * 0.6f;
 
         public void SetPosition(Vector3 regionWorld)
-        {
-            transform.position = regionWorld + Vector3.up * 0.6f;
-        }
+            => transform.position = regionWorld + Vector3.up * 0.6f;
     }
 }

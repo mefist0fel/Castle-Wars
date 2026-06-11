@@ -1,0 +1,16 @@
+{
+    "name": "CastleWars.Client",
+    "rootNamespace": "CastleWars",
+    "references": [
+        "CastleWars.Shared"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

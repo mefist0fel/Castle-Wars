@@ -40,23 +40,39 @@ The client must be opened and run through the **Unity Editor** (version 6000.3.5
 
 ### SharedCode — the shared logic layer
 
-`Castle Wars Project/Assets/SharedCode/` contains pure C# with **no UnityEngine references**. The server `.csproj` compiles these files directly via `<Compile Include="..\Castle Wars Project\Assets\SharedCode\**\*.cs" />` — no DLL, no desync.
+`Castle Wars Project/Assets/SharedCode/` — assembly `CastleWars.Shared` (`noEngineReferences: true`). Compiled by both Unity and the server (`<Compile Include="..\Castle Wars Project\Assets\SharedCode\**\*.cs" />`). **No UnityEngine types allowed** — enforced at compile time by the asmdef.
 
-Key namespaces:
-- `CastleWars.Shared.Entities` — all game entities inherit `BaseEntity` (`Id: ulong`, `Version: uint`)
-- `CastleWars.Shared.World` — `WorldState`: flat `Dictionary<ulong, BaseEntity>` registry, links between entities are IDs only (no circular refs)
-- `CastleWars.Shared.Protocol` — `ILogicCommand` (gameplay actions), `ISystemCommand` (subscription/LOD)
+Two sub-layers:
 
-**Rules for SharedCode:**
-- No `UnityEngine.*` types. Use `int`/`long` for coordinates and values instead of `float`/`Vector3`.
-- Fixed-point math: values like `MovementProgress` are integers scaled ×1000 (0–1000 = 0.0–1.0).
-- Unity-only code in shared files must be wrapped in `#if UNITY_5_3_OR_NEWER`.
+**`Core/`** — base infrastructure (reusable across games):
+- `BaseEntity` — `Id: ulong` (internal set), `Version: uint` (internal set)
+- `EntityRegistry` — flat `Dictionary<ulong, BaseEntity>`; fires `OnEntityRegistered` / `OnEntityMutated` events
+- `GameSession` — abstract outer container; owns the registry, registers `CommandHandler<T>` generics, routes `Apply(ILogicCommand)`, proxies registry events
+- `CommandHandler<TCommand>` — generic abstract base; concrete handlers registered via `RegisterHandler()`
+- `ILogicCommand` / `ISystemCommand` — marker interfaces
+
+**`Game/`** — Castle Wars specific:
+- `Entities/` — `SessionEntity` (fixed Id=1, routing root), `MapEntity`, `RegionEntity`, `CityEntity`, `ArmyEntity`, `PlayerEntity`, `FactionEntity`
+- `Commands/` — each file contains both the command data class and its handler: `CreateMapCommand`, `MoveArmyCommand`
+- `CastleWarsSession` — concrete `GameSession`; registers the session entity first (→ Id=1), registers all handlers; exposes `Seed(entity)` for meta-data bootstrapping
+
+**SharedCode rules:**
+- No `UnityEngine.*` types. Use `int`/`long` instead of `float`/`Vector3`.
+- Fixed-point math: `MovementProgress` is 0–1000 (= 0.0–1.0).
+- Unity-only code in shared files must use `#if UNITY_5_3_OR_NEWER`.
 
 ### Unity visualization (prototype only)
 
-`Assets/Scripts/Bootstrap/LocalSimulation.cs` — MonoBehaviour that builds a test `WorldState` (5×5 grid, 2 factions, cities, armies) and drives a local tick loop. Attach to a GameObject in the scene and wire `MapVisualizer` in the Inspector.
+`Assets/Scripts/` — assembly `CastleWars.Client`, references `CastleWars.Shared`.
 
-`Assets/Scripts/Visualization/` — `MapVisualizer` spawns Unity primitives (Plane = region, Cube = city, Sphere = army) and updates army positions each frame based on `MovementProgress`.
+`Visualization/EntityVisualizer` — abstract `MonoBehaviour` base; subscribes to `GameSession.OnEntityRegistered` and `OnEntityMutated` on `Bind(session)`.
+
+Three concrete visualizers, each reacting only to its own entity type:
+- `MapVisualizer` — `RegionEntity` → spawns `Plane` tiles
+- `ArmyVisualizer` — `ArmyEntity` → spawns `Sphere`, lerps position by `MovementProgress`
+- `CityVisualizer` — `CityEntity` → spawns `Cube`
+
+`Bootstrap/LocalSimulation` — creates `CastleWarsSession`, binds visualizers, applies `CreateMapCommand`, seeds test data, drives tick loop (`Mutate(army)` on each tick triggers `ArmyVisualizer` update).
 
 ## Key Conventions
 

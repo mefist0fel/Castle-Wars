@@ -1,28 +1,65 @@
-using CastleWars.Shared.Entities;
-using CastleWars.Shared.World;
+using CastleWars.Shared.Game;
+using CastleWars.Shared.Game.Commands;
+using CastleWars.Shared.Game.Entities;
 using CastleWars.Visualization;
+using System.Linq;
 using UnityEngine;
 
 namespace CastleWars.Bootstrap
 {
-    // Attach to a GameObject in the scene. Assign MapVisualizer in the Inspector.
-    // Drives a local tick loop — no networking, pure simulation for prototyping.
+    // Attach to one GameObject. Assign the three visualizer references in the Inspector.
+    // Drives a local tick loop — no networking, pure in-process simulation.
     public class LocalSimulation : MonoBehaviour
     {
-        [SerializeField] private MapVisualizer mapVisualizer;
+        [SerializeField] private MapVisualizer  mapVisualizer;
+        [SerializeField] private ArmyVisualizer armyVisualizer;
+        [SerializeField] private CityVisualizer cityVisualizer;
         [SerializeField] private float tickInterval = 0.5f;
 
-        private WorldState _world;
+        private CastleWarsSession _session;
         private float _tickTimer;
 
         private void Start()
         {
-            _world = BuildTestWorld();
-            mapVisualizer.Initialize(_world);
+            _session = new CastleWarsSession();
+
+            // Bind BEFORE applying commands so visualizers catch every entity registration
+            mapVisualizer.Bind(_session);
+            armyVisualizer.Bind(_session);
+            cityVisualizer.Bind(_session);
+
+            // Generate the map — MapVisualizer will receive OnEntityRegistered for every region
+            _session.Apply(new CreateMapCommand { Width = 5, Height = 5 });
+
+            SeedTestData();
         }
+
+        private void SeedTestData()
+        {
+            var redId  = _session.Seed(new FactionEntity { Name = "Red Kingdom",  ColorR = 200, ColorG = 50,  ColorB = 50  });
+            var blueId = _session.Seed(new FactionEntity { Name = "Blue Empire",  ColorR = 50,  ColorG = 100, ColorB = 200 });
+
+            var p1 = _session.Seed(new PlayerEntity { Name = "Alice", FactionId = redId,  Gold = 500 });
+            var p2 = _session.Seed(new PlayerEntity { Name = "Bob",   FactionId = blueId, Gold = 500 });
+
+            _session.Seed(new CityEntity { Name = "Redfort",   RegionId = RegionId(0, 2), OwnerId = p1, GarrisonCount = 20 });
+            _session.Seed(new CityEntity { Name = "Ironhold",  RegionId = RegionId(1, 1), OwnerId = p1, GarrisonCount = 10 });
+            _session.Seed(new CityEntity { Name = "Bluehaven", RegionId = RegionId(4, 2), OwnerId = p2, GarrisonCount = 20 });
+            _session.Seed(new CityEntity { Name = "Coldmere",  RegionId = RegionId(3, 3), OwnerId = p2, GarrisonCount = 10 });
+
+            var army1 = _session.Seed(new ArmyEntity { OwnerId = p1, UnitCount = 15, CurrentRegionId = RegionId(1, 2) });
+            _session.Seed(new ArmyEntity                             { OwnerId = p2, UnitCount = 10, CurrentRegionId = RegionId(3, 2) });
+
+            // Kick off first movement through the command system
+            _session.Apply(new MoveArmyCommand { ArmyId = army1, TargetX = 2, TargetY = 2 });
+        }
+
+        private ulong RegionId(int x, int y)
+            => _session.Query<RegionEntity>().FirstOrDefault(r => r.GridX == x && r.GridY == y)?.Id ?? 0;
 
         private void Update()
         {
+            if (_session == null) return;
             _tickTimer += Time.deltaTime;
             if (_tickTimer < tickInterval) return;
             _tickTimer = 0f;
@@ -31,66 +68,20 @@ namespace CastleWars.Bootstrap
 
         private void Tick()
         {
-            foreach (var army in _world.GetAll<ArmyEntity>())
+            foreach (var army in _session.Query<ArmyEntity>())
             {
                 if (army.TargetRegionId == 0) continue;
 
-                army.MovementProgress += 100; // +10% per tick
-
+                army.MovementProgress += 100;
                 if (army.MovementProgress >= 1000)
                 {
-                    army.CurrentRegionId = army.TargetRegionId;
-                    army.TargetRegionId = 0;
+                    army.CurrentRegionId  = army.TargetRegionId;
+                    army.TargetRegionId   = 0;
                     army.MovementProgress = 0;
                 }
 
-                _world.Mutate(army);
+                _session.Mutate(army); // fires OnEntityMutated → ArmyVisualizer updates position
             }
-        }
-
-        private static WorldState BuildTestWorld()
-        {
-            var w = new WorldState();
-
-            // --- Factions ---
-            var redId  = w.Register(new FactionEntity { Name = "Red Kingdom",  ColorR = 200, ColorG = 50,  ColorB = 50  });
-            var blueId = w.Register(new FactionEntity { Name = "Blue Empire",  ColorR = 50,  ColorG = 100, ColorB = 200 });
-
-            // --- Players ---
-            var p1 = w.Register(new PlayerEntity { Name = "Alice", FactionId = redId,  Gold = 500 });
-            var p2 = w.Register(new PlayerEntity { Name = "Bob",   FactionId = blueId, Gold = 500 });
-
-            // --- 5×5 region grid ---
-            // x < 2 → Red, x > 2 → Blue, x == 2 → neutral
-            var rid = new ulong[5, 5];
-            for (int x = 0; x < 5; x++)
-            for (int y = 0; y < 5; y++)
-            {
-                ulong owner = x < 2 ? redId : x > 2 ? blueId : 0UL;
-                rid[x, y] = w.Register(new RegionEntity { GridX = x, GridY = y, OwnerId = owner });
-            }
-
-            // --- Cities ---
-            w.Register(new CityEntity { Name = "Redfort",   RegionId = rid[0, 2], OwnerId = p1, GarrisonCount = 20 });
-            w.Register(new CityEntity { Name = "Ironhold",  RegionId = rid[1, 1], OwnerId = p1, GarrisonCount = 10 });
-            w.Register(new CityEntity { Name = "Bluehaven", RegionId = rid[4, 2], OwnerId = p2, GarrisonCount = 20 });
-            w.Register(new CityEntity { Name = "Coldmere",  RegionId = rid[3, 3], OwnerId = p2, GarrisonCount = 10 });
-
-            // --- Armies ---
-            w.Register(new ArmyEntity
-            {
-                OwnerId = p1, UnitCount = 15,
-                CurrentRegionId = rid[1, 2], TargetRegionId = rid[2, 2],
-                MovementProgress = 0
-            });
-            w.Register(new ArmyEntity
-            {
-                OwnerId = p2, UnitCount = 10,
-                CurrentRegionId = rid[3, 2], TargetRegionId = 0,
-                MovementProgress = 0
-            });
-
-            return w;
         }
     }
 }

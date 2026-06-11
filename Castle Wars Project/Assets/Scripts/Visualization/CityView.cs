@@ -1,4 +1,4 @@
-using CastleWars.Shared.Entities;
+using CastleWars.Shared.Game.Entities;
 using UnityEngine;
 
 namespace CastleWars.Visualization
@@ -10,10 +10,10 @@ namespace CastleWars.Visualization
 
         private void Awake() => _renderer = GetComponent<Renderer>();
 
-        public void Bind(CityEntity city, FactionEntity owner)
+        public void Refresh(CityEntity city, FactionEntity faction)
         {
-            _renderer.material.color = owner != null
-                ? new Color(owner.ColorR / 255f, owner.ColorG / 255f, owner.ColorB / 255f)
+            _renderer.material.color = faction != null
+                ? new Color(faction.ColorR / 255f, faction.ColorG / 255f, faction.ColorB / 255f)
                 : Color.white;
         }
     }

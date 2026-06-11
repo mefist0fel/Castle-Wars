@@ -61,20 +61,35 @@
     <Analyzer Include="C:\Program Files\Unity\Hub\Editor\6000.3.5f2\Editor\Data\Tools\BuildPipeline\Unity.SourceGenerators\Unity.UIToolkit.SourceGenerator.dll" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\SharedCode\Protocol\ILogicCommand.cs" />
-    <Compile Include="Assets\SharedCode\Entities\BaseEntity.cs" />
-    <Compile Include="Assets\SharedCode\Protocol\ISystemCommand.cs" />
-    <Compile Include="Assets\SharedCode\Entities\FactionEntity.cs" />
-    <Compile Include="Assets\SharedCode\Entities\CityEntity.cs" />
-    <Compile Include="Assets\SharedCode\Entities\ArmyEntity.cs" />
+    <Compile Include="Assets\Scripts\Utils\BesieCurve.cs" />
+    <Compile Include="Assets\Scripts\Utils\Singletone.cs" />
+    <Compile Include="Assets\Scripts\Utils\ExpandCamera.cs" />
+    <Compile Include="Assets\Scripts\Utils\DrawIf\DrawIfAttribute.cs" />
+    <Compile Include="Assets\Scripts\Utils\Mesh\SphereMesh.cs" />
+    <Compile Include="Assets\Scripts\Utils\TMProExtension.cs" />
+    <Compile Include="Assets\Scripts\Utils\DrawIf\DrawIfPropertyDrawer.cs" />
+    <Compile Include="Assets\Scripts\Utils\ReadOnly\ReadOnlyDrawer.cs" />
+    <Compile Include="Assets\Scripts\Utils\Timer.cs" />
+    <Compile Include="Assets\Scripts\Utils\ReadOnly\ReadOnlyAttribute.cs" />
     <Compile Include="Assets\Scripts\Visualization\MapVisualizer.cs" />
-    <Compile Include="Assets\SharedCode\Entities\PlayerEntity.cs" />
+    <Compile Include="Assets\Scripts\Utils\LookAtCamera.cs" />
+    <Compile Include="Assets\Scripts\Utils\Mesh\BoxMeshFilter.cs" />
+    <Compile Include="Assets\Scripts\Utils\DontDublicateCanvas.cs" />
+    <Compile Include="Assets\Scripts\Utils\GameObjectExtension.cs" />
+    <Compile Include="Assets\Scripts\Utils\FPS.cs" />
+    <Compile Include="Assets\Scripts\Utils\Utils.cs" />
     <Compile Include="Assets\Scripts\Visualization\RegionView.cs" />
-    <Compile Include="Assets\SharedCode\Entities\RegionEntity.cs" />
+    <Compile Include="Assets\Scripts\Utils\Mesh\MeshGenerator.cs" />
+    <Compile Include="Assets\Scripts\Utils\Mesh\TubeMeshFilter.cs" />
+    <Compile Include="Assets\Scripts\Utils\Mesh\CylinderMeshFilter.cs" />
     <Compile Include="Assets\Scripts\Visualization\CityView.cs" />
-    <Compile Include="Assets\SharedCode\World\WorldState.cs" />
+    <Compile Include="Assets\Scripts\Utils\Mesh\PrysmMeshFilter.cs" />
+    <Compile Include="Assets\Scripts\Utils\Rotator.cs" />
     <Compile Include="Assets\Scripts\Bootstrap\LocalSimulation.cs" />
     <Compile Include="Assets\Scripts\Visualization\ArmyView.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Assets\Scripts\Utils\Newtonsoft.Json.dll" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">
@@ -631,6 +646,10 @@
     </Reference>
     <Reference Include="System.Runtime.CompilerServices.Unsafe">
       <HintPath>Library\PackageCache\com.unity.collections@aea9d3bd5e19\Unity.Collections.Tests\System.Runtime.CompilerServices.Unsafe\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>Assets\Scripts\Utils\Newtonsoft.Json.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEditor.iOS.Extensions.Xcode">
@@ -1283,6 +1302,46 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="Tyrants.SceneManagement.csproj">
+      <Project>{7016E174-3FEB-8D3F-A7E8-1AC83D7F1669}</Project>
+      <Name>Tyrants.SceneManagement</Name>
+    </ProjectReference>
+    <ProjectReference Include="Configurations.csproj">
+      <Project>{86C7D9ED-D8E8-6D0F-E409-152944CD6F72}</Project>
+      <Name>Configurations</Name>
+    </ProjectReference>
+    <ProjectReference Include="EasyButtons.Editor.csproj">
+      <Project>{930EF52E-3099-C653-FC34-9AC294998673}</Project>
+      <Name>EasyButtons.Editor</Name>
+    </ProjectReference>
+    <ProjectReference Include="SharedCode.csproj">
+      <Project>{B66A8CED-C612-F4B9-0310-309D99F13AF6}</Project>
+      <Name>SharedCode</Name>
+    </ProjectReference>
+    <ProjectReference Include="EasyButtons.csproj">
+      <Project>{A14E0742-849F-D05E-E4D8-57FD3CFC5119}</Project>
+      <Name>EasyButtons</Name>
+    </ProjectReference>
+    <ProjectReference Include="Sound.UI.csproj">
+      <Project>{CDAE43DD-1ECB-2235-328F-66304E760396}</Project>
+      <Name>Sound.UI</Name>
+    </ProjectReference>
+    <ProjectReference Include="Configurations.Model.csproj">
+      <Project>{5B73EBB6-6787-C168-6238-FB839C0D2723}</Project>
+      <Name>Configurations.Model</Name>
+    </ProjectReference>
+    <ProjectReference Include="Sound.Editor.csproj">
+      <Project>{BD4C13F1-C4A7-EAC4-B717-8AFB605BEEC6}</Project>
+      <Name>Sound.Editor</Name>
+    </ProjectReference>
+    <ProjectReference Include="DebugPanel.csproj">
+      <Project>{B3FB101A-71DA-DEDB-A652-D691ADC84447}</Project>
+      <Name>DebugPanel</Name>
+    </ProjectReference>
+    <ProjectReference Include="Sound.csproj">
+      <Project>{7F1EAD34-E7C9-FD93-C036-E20A0813E75F}</Project>
+      <Name>Sound</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="GenerateTargetFrameworkMonikerAttribute" />
