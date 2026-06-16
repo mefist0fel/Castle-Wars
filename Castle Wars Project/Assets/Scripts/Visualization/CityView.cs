@@ -10,11 +10,12 @@ namespace CastleWars.Visualization
 
         private void Awake() => _renderer = GetComponent<Renderer>();
 
-        public void Refresh(CityEntity city, FactionEntity faction)
+        public void Refresh(CityEntity city, PlayerEntity? owner)
         {
-            _renderer.material.color = faction != null
-                ? new Color(faction.ColorR / 255f, faction.ColorG / 255f, faction.ColorB / 255f)
-                : Color.white;
+            if (owner != null)
+                _renderer.material.color = new Color(owner.ColorR / 255f, owner.ColorG / 255f, owner.ColorB / 255f);
+            else
+                _renderer.material.color = new Color(0.8f, 0.7f, 0.2f);
         }
     }
 }

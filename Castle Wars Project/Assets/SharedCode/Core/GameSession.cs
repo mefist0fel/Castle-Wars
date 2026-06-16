@@ -47,8 +47,17 @@ namespace CastleWars.Shared.Core
         public T? Get<T>(ulong id) where T : BaseEntity
             => Registry.Get<T>(id);
 
+        public BaseEntity? GetAny(ulong id)
+            => Registry.GetAny(id);
+
         public IEnumerable<T> Query<T>() where T : BaseEntity
             => Registry.GetAll<T>();
+
+        public IEnumerable<BaseEntity> QueryAll()
+            => Registry.GetAll();
+
+        public int EntityCount
+            => Registry.Count;
 
         public void Mutate(BaseEntity entity)
             => Registry.Mutate(entity);

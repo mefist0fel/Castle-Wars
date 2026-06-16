@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using CastleWars.Shared.Core;
 using CastleWars.Shared.Game.Entities;
 using UnityEngine;
@@ -38,26 +37,9 @@ namespace CastleWars.Visualization
 
         private void RefreshArmy(ArmyEntity army, ArmyView view)
         {
-            var player  = Session.Get<PlayerEntity>(army.OwnerId);
-            var faction = player != null ? Session.Get<FactionEntity>(player.FactionId) : null;
-            view.Refresh(army, faction);
-
-            var fromRegion = Session.Get<RegionEntity>(army.CurrentRegionId);
-            if (fromRegion == null) return;
-
-            var fromPos = mapVisualizer.ToWorld(fromRegion);
-
-            if (army.TargetRegionId != 0)
-            {
-                var toRegion = Session.Get<RegionEntity>(army.TargetRegionId);
-                if (toRegion != null)
-                {
-                    view.UpdatePosition(fromPos, mapVisualizer.ToWorld(toRegion));
-                    return;
-                }
-            }
-
-            view.SetPosition(fromPos);
+            var owner = army.OwnerId != 0 ? Session.Get<PlayerEntity>(army.OwnerId) : null;
+            view.Refresh(army, owner);
+            view.SetPosition(mapVisualizer.CellToWorld(army.X, army.Y));
         }
     }
 }

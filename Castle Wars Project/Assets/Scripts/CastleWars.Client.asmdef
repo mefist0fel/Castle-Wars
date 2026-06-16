@@ -2,7 +2,8 @@
     "name": "CastleWars.Client",
     "rootNamespace": "CastleWars",
     "references": [
-        "CastleWars.Shared"
+        "CastleWars.Shared",
+        "Unity.TextMeshPro"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

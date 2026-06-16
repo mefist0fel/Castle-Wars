@@ -10,11 +10,9 @@ namespace CastleWars.Visualization
 
         private void Awake() => _renderer = GetComponent<Renderer>();
 
-        public void Refresh(RegionEntity region, FactionEntity owner)
+        public void Refresh(RegionEntity region)
         {
-            _renderer.material.color = owner != null
-                ? new Color(owner.ColorR / 255f, owner.ColorG / 255f, owner.ColorB / 255f, 0.6f)
-                : new Color(0.45f, 0.45f, 0.45f);
+            _renderer.material.color = new Color(0.45f, 0.45f, 0.45f);
         }
     }
 }

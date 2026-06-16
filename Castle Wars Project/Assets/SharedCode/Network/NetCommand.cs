@@ -4,7 +4,7 @@ namespace CastleWars.Shared.Network
 {
     // Base type for all commands flowing client → server.
     // Concrete types are registered via [MessagePackKnownCollectionItemType] on CommandBatch.Commands.
-    public abstract class NetCommand { }
+    //public abstract class NetCommand { }
 
     // Wraps game-logic MoveArmyCommand data for the wire.
     public class MoveArmyNetCommand : NetCommand

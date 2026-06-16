@@ -8,22 +8,20 @@ namespace CastleWars.Visualization
     {
         private Renderer _renderer;
 
-        public ArmyEntity Army { get; private set; }
+        public ArmyEntity? Army { get; private set; }
 
         private void Awake() => _renderer = GetComponent<Renderer>();
 
-        public void Refresh(ArmyEntity army, FactionEntity faction)
+        public void Refresh(ArmyEntity army, PlayerEntity? owner)
         {
             Army = army;
-            _renderer.material.color = faction != null
-                ? new Color(faction.ColorR / 255f, faction.ColorG / 255f, faction.ColorB / 255f)
-                : Color.white;
+            if (owner != null)
+                _renderer.material.color = new Color(owner.ColorR / 255f, owner.ColorG / 255f, owner.ColorB / 255f);
+            else
+                _renderer.material.color = Color.white;
         }
 
-        public void UpdatePosition(Vector3 from, Vector3 to)
-            => transform.position = Vector3.Lerp(from, to, Army.MovementProgress / 1000f) + Vector3.up * 0.6f;
-
-        public void SetPosition(Vector3 regionWorld)
-            => transform.position = regionWorld + Vector3.up * 0.6f;
+        public void SetPosition(Vector3 worldPos)
+            => transform.position = worldPos + Vector3.up * 0.6f;
     }
 }

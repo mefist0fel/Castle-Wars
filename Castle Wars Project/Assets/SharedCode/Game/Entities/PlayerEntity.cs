@@ -6,7 +6,11 @@ namespace CastleWars.Shared.Game.Entities
     public class PlayerEntity : BaseEntity
     {
         public string Name { get; set; } = string.Empty;
-        public ulong FactionId { get; set; }
-        public int Gold { get; set; }
+        // 0–255 ints, no float
+        public int ColorR { get; set; }
+        public int ColorG { get; set; }
+        public int ColorB { get; set; }
+        public ulong ArmyId { get; set; }
+        public bool IsConnected { get; set; }
     }
 }

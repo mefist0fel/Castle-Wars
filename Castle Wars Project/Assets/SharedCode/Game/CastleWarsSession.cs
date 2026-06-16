@@ -12,14 +12,16 @@ namespace CastleWars.Shared.Game
             // SessionEntity is always registered first → always gets Id = 1
             Registry.Register(new SessionEntity());
 
-            RegisterHandler(new CreateMapCommandHandler());
-            RegisterHandler(new MoveArmyCommandHandler());
+            RegisterHandler(new CreateGameCommandHandler());
+            RegisterHandler(new TeleportArmyCommandHandler());
+            RegisterHandler(new AttackArmyCommandHandler());
+            RegisterHandler(new CaptureCityCommandHandler());
+            RegisterHandler(new HealArmyCommandHandler());
         }
 
-        // Shortcut to the fixed routing entity
         public SessionEntity Session => Registry.Get<SessionEntity>(1)!;
 
-        // Used for seeding static/meta data (factions, players) outside the command system
+        // Register pre-built entities (players, etc.) outside the command system
         public ulong Seed(BaseEntity entity) => Registry.Register(entity);
     }
 }

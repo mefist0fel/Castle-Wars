@@ -25,13 +25,10 @@ namespace CastleWars.Visualization
 
         private void SpawnCity(CityEntity city)
         {
-            var region = Session.Get<RegionEntity>(city.RegionId);
-            if (region == null) return;
-
             var go = GameObject.CreatePrimitive(PrimitiveType.Cube);
             go.name = $"City_{city.Name}";
             go.transform.SetParent(transform);
-            go.transform.localPosition = mapVisualizer.ToWorld(region) + Vector3.up * 0.3f;
+            go.transform.localPosition = mapVisualizer.CellToWorld(city.X, city.Y) + Vector3.up * 0.3f;
             go.transform.localScale    = Vector3.one * 0.4f;
 
             var view = go.AddComponent<CityView>();
@@ -41,9 +38,8 @@ namespace CastleWars.Visualization
 
         private void RefreshCity(CityEntity city, CityView view)
         {
-            var player  = Session.Get<PlayerEntity>(city.OwnerId);
-            var faction = player != null ? Session.Get<FactionEntity>(player.FactionId) : null;
-            view.Refresh(city, faction);
+            var owner = city.OwnerId != 0 ? Session.Get<PlayerEntity>(city.OwnerId) : null;
+            view.Refresh(city, owner);
         }
     }
 }

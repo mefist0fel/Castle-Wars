@@ -26,8 +26,16 @@ namespace CastleWars.Shared.Core
         public T? Get<T>(ulong id) where T : BaseEntity
             => _entities.TryGetValue(id, out var e) ? e as T : null;
 
+        public BaseEntity? GetAny(ulong id)
+            => _entities.TryGetValue(id, out var e) ? e : null;
+
         public IEnumerable<T> GetAll<T>() where T : BaseEntity
             => _entities.Values.OfType<T>();
+
+        public IEnumerable<BaseEntity> GetAll()
+            => _entities.Values;
+
+        public int Count => _entities.Count;
 
         // Increments version and notifies subscribers.
         public void Mutate(BaseEntity entity)
