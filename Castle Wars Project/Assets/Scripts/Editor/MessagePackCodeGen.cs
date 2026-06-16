@@ -13,9 +13,9 @@ namespace CastleWars.Editor
         //   - no #nullable enable
         //   - no auto-property initializers (= new List<>() / = string.Empty)
         //   - use constructors for initialization instead
+        // NetCommand.cs is a stub now — only EntitySnapshot and NetBatches contain live types.
         private static readonly string[] NetworkSources =
         {
-            Path.Combine("Assets", "SharedCode", "Network", "NetCommand.cs"),
             Path.Combine("Assets", "SharedCode", "Network", "EntitySnapshot.cs"),
             Path.Combine("Assets", "SharedCode", "Network", "NetBatches.cs"),
         };
@@ -25,8 +25,10 @@ namespace CastleWars.Editor
         // The runtime handles abstract-type dispatch; we only need AOT code for concrete types.
         private const string IncludesPattern =
             "(CommandBatch|EntityUpdateBatch" +
-            "|MoveArmyNetCommand|CreateMapNetCommand" +
-            "|ArmySnapshot|CitySnapshot)";
+            "|TeleportArmyNetCommand|AttackArmyNetCommand|CaptureCityNetCommand" +
+            "|HealArmyNetCommand|CreateGameNetCommand" +
+            "|SessionSnapshot|PlayerSnapshot|MapSnapshot" +
+            "|RegionSnapshot|ArmySnapshot|CitySnapshot)";
 
         [MenuItem("Tools/MessagePack/Regenerate Serializers")]
         private static void RegenerateSerializers()

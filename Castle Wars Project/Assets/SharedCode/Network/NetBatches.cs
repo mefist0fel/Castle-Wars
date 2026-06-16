@@ -1,9 +1,10 @@
+// C# 5-compatible (no auto-property initializers) so mpu.exe can parse this file.
 using System.Collections.Generic;
 using MsgPack.Serialization;
 
 namespace CastleWars.Shared.Network
 {
-    // ── Commands (client → server) ───────────────────────────────────────────
+    // ── Commands (client -> server) ──────────────────────────────────────────
 
     public abstract class NetCommand { }
 
@@ -43,21 +44,25 @@ namespace CastleWars.Shared.Network
     }
 
     // One logical tick's worth of player input.
-    [MessagePackKnownCollectionItemType("teleport",  typeof(TeleportArmyNetCommand))]
-    [MessagePackKnownCollectionItemType("attack",    typeof(AttackArmyNetCommand))]
-    [MessagePackKnownCollectionItemType("capture",   typeof(CaptureCityNetCommand))]
-    [MessagePackKnownCollectionItemType("heal",      typeof(HealArmyNetCommand))]
-    [MessagePackKnownCollectionItemType("creategame",typeof(CreateGameNetCommand))]
+    [MessagePackKnownCollectionItemType("teleport",   typeof(TeleportArmyNetCommand))]
+    [MessagePackKnownCollectionItemType("attack",     typeof(AttackArmyNetCommand))]
+    [MessagePackKnownCollectionItemType("capture",    typeof(CaptureCityNetCommand))]
+    [MessagePackKnownCollectionItemType("heal",       typeof(HealArmyNetCommand))]
+    [MessagePackKnownCollectionItemType("creategame", typeof(CreateGameNetCommand))]
     public class CommandBatch
     {
-        public CommandBatch() { Commands = new List<NetCommand>(); }
+        public CommandBatch()
+        {
+            Commands = new List<NetCommand>();
+            SessionToken = string.Empty;
+        }
 
         [MessagePackMember(0)] public long Tick { get; set; }
-        [MessagePackMember(1)] public string SessionToken { get; set; } = string.Empty;
+        [MessagePackMember(1)] public string SessionToken { get; set; }
         [MessagePackMember(2)] public List<NetCommand> Commands { get; set; }
     }
 
-    // ── Entity updates (server → client) ────────────────────────────────────
+    // ── Entity updates (server -> client) ────────────────────────────────────
 
     [MessagePackKnownCollectionItemType("session", typeof(SessionSnapshot))]
     [MessagePackKnownCollectionItemType("player",  typeof(PlayerSnapshot))]
@@ -67,11 +72,16 @@ namespace CastleWars.Shared.Network
     [MessagePackKnownCollectionItemType("city",    typeof(CitySnapshot))]
     public class EntityUpdateBatch
     {
-        public EntityUpdateBatch() { Snapshots = new List<EntitySnapshot>(); }
+        public EntityUpdateBatch()
+        {
+            Snapshots = new List<EntitySnapshot>();
+            AddedSubscriptions = new ulong[0];
+            RemovedSubscriptions = new ulong[0];
+        }
 
         [MessagePackMember(0)] public long ServerTick { get; set; }
         [MessagePackMember(1)] public List<EntitySnapshot> Snapshots { get; set; }
-        [MessagePackMember(2)] public ulong[] AddedSubscriptions { get; set; } = System.Array.Empty<ulong>();
-        [MessagePackMember(3)] public ulong[] RemovedSubscriptions { get; set; } = System.Array.Empty<ulong>();
+        [MessagePackMember(2)] public ulong[] AddedSubscriptions { get; set; }
+        [MessagePackMember(3)] public ulong[] RemovedSubscriptions { get; set; }
     }
 }
