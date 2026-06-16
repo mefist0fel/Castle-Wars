@@ -1,4 +1,3 @@
-#nullable enable
 using MsgPack.Serialization;
 
 namespace CastleWars.Shared.Network
@@ -20,8 +19,10 @@ namespace CastleWars.Shared.Network
 
     public class CitySnapshot : EntitySnapshot
     {
+        public CitySnapshot() { Name = string.Empty; }
+
         [MessagePackMember(0)] public ulong EntityId { get; set; }
-        [MessagePackMember(1)] public string Name { get; set; } = string.Empty;
+        [MessagePackMember(1)] public string Name { get; set; }
         [MessagePackMember(2)] public ulong RegionId { get; set; }
         [MessagePackMember(3)] public ulong OwnerId { get; set; }
         [MessagePackMember(4)] public int GarrisonCount { get; set; }

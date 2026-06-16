@@ -1,10 +1,8 @@
-#nullable enable
 using MsgPack.Serialization;
 
 namespace CastleWars.Shared.Network
 {
     // Base type for all commands flowing client → server.
-    // No attribute needed: MsgPack.Cli serializes by reflection unless members carry [MessagePackMember].
     // Concrete types are registered via [MessagePackKnownCollectionItemType] on CommandBatch.Commands.
     public abstract class NetCommand { }
 
