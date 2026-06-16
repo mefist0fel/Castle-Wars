@@ -1,7 +1,10 @@
 using CastleWars.Shared.Game;
 using CastleWars.Shared.Game.Commands;
 using CastleWars.Shared.Game.Entities;
+using CastleWars.Shared.Network;
 using CastleWars.Visualization;
+using MsgPack.Serialization;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -32,6 +35,7 @@ namespace CastleWars.Bootstrap
             _session.Apply(new CreateMapCommand { Width = 5, Height = 5 });
 
             SeedTestData();
+            TestMsgPackSerialization();
         }
 
         private void SeedTestData()
@@ -52,6 +56,53 @@ namespace CastleWars.Bootstrap
 
             // Kick off first movement through the command system
             _session.Apply(new MoveArmyCommand { ArmyId = army1, TargetX = 2, TargetY = 2 });
+        }
+
+        private static void TestMsgPackSerialization()
+        {
+            // --- CommandBatch roundtrip (client → server direction) ---
+            var cmdBatch = new CommandBatch
+            {
+                Tick = 1,
+                Commands = new List<NetCommand>
+                {
+                    new MoveArmyNetCommand { ArmyId = 7, TargetX = 3, TargetY = 2 },
+                    new CreateMapNetCommand { Width = 5, Height = 5 },
+                }
+            };
+
+            var cmdSer   = MessagePackSerializer.Get<CommandBatch>();
+            var cmdBytes = cmdSer.PackSingleObject(cmdBatch);
+            var cmdBack  = cmdSer.UnpackSingleObject(cmdBytes);
+
+            Debug.Log($"[MsgPack] CommandBatch OK — {cmdBytes.Length} bytes, " +
+                      $"{cmdBack.Commands.Count} commands, " +
+                      $"cmd[0]={cmdBack.Commands[0].GetType().Name}");
+
+            var move = (MoveArmyNetCommand)cmdBack.Commands[0];
+            Debug.Log($"[MsgPack] MoveArmyNetCommand: ArmyId={move.ArmyId} TargetX={move.TargetX} TargetY={move.TargetY}");
+
+            // --- EntityUpdateBatch roundtrip (server → client direction) ---
+            var updBatch = new EntityUpdateBatch
+            {
+                ServerTick = 42,
+                Snapshots = new List<EntitySnapshot>
+                {
+                    new ArmySnapshot { EntityId = 1, OwnerId = 2, UnitCount = 15, MovementProgress = 500 },
+                    new CitySnapshot { EntityId = 3, Name = "Redfort", OwnerId = 2, GarrisonCount = 20 },
+                }
+            };
+
+            var updSer   = MessagePackSerializer.Get<EntityUpdateBatch>();
+            var updBytes = updSer.PackSingleObject(updBatch);
+            var updBack  = updSer.UnpackSingleObject(updBytes);
+
+            Debug.Log($"[MsgPack] EntityUpdateBatch OK — {updBytes.Length} bytes, " +
+                      $"{updBack.Snapshots.Count} snapshots, " +
+                      $"snap[0]={updBack.Snapshots[0].GetType().Name}");
+
+            var city = (CitySnapshot)updBack.Snapshots[1];
+            Debug.Log($"[MsgPack] CitySnapshot: Name={city.Name} Garrison={city.GarrisonCount}");
         }
 
         private ulong RegionId(int x, int y)

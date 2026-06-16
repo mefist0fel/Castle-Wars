@@ -14,4 +14,11 @@
     <Compile Include="..\Castle Wars Project\Assets\SharedCode\**\*.cs" />
   </ItemGroup>
 
+  <!-- Match the version of MsgPack.dll shipped in Assets/Plugin/MessagePack/. -->
+  <!-- If the package restore fails, check the exact version with: -->
+  <!--   dotnet list package  or  look at MsgPack.XML <assembly><name>MsgPack</name> -->
+  <ItemGroup>
+    <PackageReference Include="MsgPack.Cli" Version="1.0.1" />
+  </ItemGroup>
+
 </Project>
